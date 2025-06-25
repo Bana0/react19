@@ -33,12 +33,10 @@ const Shadcn = () => {
   const rowVirtualizer = useVirtualizer({
     count: messages.length,
     getScrollElement: () => scrollAreaRef.current?.querySelector('[data-radix-scroll-area-viewport]') || scrollAreaRef.current,
-    estimateSize: useCallback(() => 100, []), // 默认估计高度
+    measureElement: typeof window !== 'undefined' && navigator.userAgent.indexOf('Firefox') === -1 ? (element) => element?.getBoundingClientRect().height : undefined,
+    estimateSize: useCallback(() => 200, []), // 默认估计高度
     overscan: 5, // 预加载数量
   })
-
-  // 消息元素引用（用于测量高度）
-  const messageRefs = useRef<{ [key: string]: HTMLElement | null }>({})
 
   useEffect(() => {
     const ws = initSocket()
@@ -47,6 +45,9 @@ const Shadcn = () => {
       console.log('接收到消息:', msg)
       if (msg.type === 'message') {
         setMessages((prev) => [msg.data, ...prev]) // 新消息添加到开头
+        // setTimeout(() => {
+        //   rowVirtualizer.scrollToIndex(messages.length - 1, { align: 'auto', behavior: 'smooth' })
+        // }, 0)
       } else {
         setMessages(msg.data.reverse()) // 历史消息反转（最新消息在开头）
       }
@@ -58,23 +59,10 @@ const Shadcn = () => {
   }, [])
 
   // 当消息更新时滚动到底部（最新消息）
-  useEffect(() => {
-    // 只在有新消息时滚动
-    if (messages.length > 0) {
-      rowVirtualizer.scrollToIndex(0, { align: 'end', behavior: 'smooth' })
-    }
-  }, [messages, rowVirtualizer])
-
-  // 更新消息高度
-  const updateMessageHeight = useCallback(
-    (id: string, height: number) => {
-      const element = messageRefs.current[id]
-      if (element) {
-        rowVirtualizer.measureElement(element, () => height)
-      }
-    },
-    [rowVirtualizer]
-  )
+  // useEffect(() => {
+  //   // 只在有新消息时滚动
+  //   rowVirtualizer.scrollToIndex(messages.length - 1, { align: 'auto', behavior: 'smooth' })
+  // }, [messages, rowVirtualizer])
 
   const send = () => {
     console.log('发送消息:', text)
@@ -85,14 +73,96 @@ const Shadcn = () => {
           text: text,
         })
         .then(() => {
+          console.log('消息发送成功', messages.length)
+          rowVirtualizer.scrollToIndex(messages.length - 1, { align: 'start', behavior: 'smooth' })
           setText('')
         })
     }
   }
 
+  const loadHistroy = () => {
+    axios.get('http://localhost:3000/api/messages').then((res) => {
+      // console.log('as', res.data.data)
+      const data = [
+        {
+          id: 1,
+          sender: '1',
+          text: '你好',
+          timestamp: new Date(),
+        },
+        {
+          id: 2,
+          sender: '1',
+          text: '你好',
+          timestamp: new Date(),
+        },
+        {
+          id: 3,
+          sender: '1',
+          text: '你好',
+          timestamp: new Date(),
+        },
+        {
+          id: 4,
+          sender: '1',
+          text: '你好',
+          timestamp: new Date(),
+        },
+        {
+          id: 5,
+          sender: '1',
+          text: '你好',
+          timestamp: new Date(),
+        },
+        {
+          id: 6,
+          sender: '1',
+          text: '你好',
+          timestamp: new Date(),
+        },
+        {
+          id: 7,
+          sender: '1',
+          text: '你好',
+          timestamp: new Date(),
+        },
+        {
+          id: 8,
+          sender: '1',
+          text: '你好',
+          timestamp: new Date(),
+        },
+        {
+          id: 9,
+          sender: '1',
+          text: '你好',
+          timestamp: new Date(),
+        },
+        {
+          id: 10,
+          sender: '1',
+          text: '你好',
+          timestamp: new Date(),
+        },
+        {
+          id: 11,
+          sender: '1',
+          text: '你好',
+          timestamp: new Date(),
+        },
+      ]
+
+      setMessages((pre) => [...pre, ...data])
+      rowVirtualizer.scrollToIndex(0, { align: 'auto', behavior: 'auto' })
+    })
+  }
+
   return (
     <div className="flex flex-col w-[800px] mx-auto gap-4 p-4">
       <ScrollArea ref={scrollAreaRef} className="h-[400px] border rounded-md">
+        <div className="text-sm p-2 text-center text-blue-400 cursor-pointer" onClick={loadHistroy}>
+          历史消息
+        </div>
         {/* 虚拟滚动容器 */}
         <div
           style={{
@@ -110,17 +180,8 @@ const Shadcn = () => {
             return (
               <div
                 key={message.id}
-                ref={(el) => {
-                  messageRefs.current[message.id] = el
-                  // 在元素渲染后更新高度
-                  if (el) {
-                    setTimeout(() => {
-                      const height = el.getBoundingClientRect().height
-                      updateMessageHeight(message.id, height)
-                    }, 0)
-                  }
-                }}
-                data-index={virtualItem.index}
+                data-index={virtualItem.index} //needed for dynamic row height measurement
+                ref={(node) => rowVirtualizer.measureElement(node)} //measure dynamic row height
                 style={{
                   position: 'absolute',
                   top: 0,
@@ -134,7 +195,7 @@ const Shadcn = () => {
                     {/* 头像 */}
                     <div className="w-8 h-8 rounded-full bg-gray-200 flex items-center justify-center">{message.sender.charAt(0)}</div>
 
-                    <div className="flex flex-col">
+                    <div className="flex-1 flex flex-col">
                       {/* 消息气泡 */}
                       <div className={`px-3 py-2 rounded-xl ${isCurrentUser ? 'bg-blue-500 text-white rounded-br-none' : 'bg-gray-100 text-gray-800 rounded-bl-none'}`}>{message.text}</div>
 
