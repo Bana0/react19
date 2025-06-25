@@ -3,22 +3,23 @@ import { flexRender, getCoreRowModel, getSortedRowModel, useReactTable } from '@
 
 import { useVirtualizer } from '@tanstack/react-virtual'
 import type { Person } from './data'
-import type { RefObject } from 'react'
+import { useEffect, useRef } from 'react'
 import { cn } from '@/lib/utils'
 
 interface BasicTableProps {
   data: Person[]
   columns: ColumnDef<Person>[]
-  tableContainerRef: RefObject<HTMLDivElement | null>
+  // tableContainerRef: RefObject<HTMLDivElement | null>
   isLoading: boolean
   isFetching: boolean
-  loadMore: (e: HTMLDivElement) => void
+  // loadMore: (e: HTMLDivElement) => void
   className?: string
+  setScrollTarget?: (e: HTMLElement) => void
   // sorting: SortingState
   // setSorting: (updater: OnChangeFn<SortingState>) => void
 }
 
-const BasicTableV2 = ({ data, columns, tableContainerRef, isLoading, isFetching, loadMore, className }: BasicTableProps) => {
+const BasicTableV2 = ({ data, columns, isLoading, isFetching, className, setScrollTarget }: BasicTableProps) => {
   const table = useReactTable({
     data: data,
     columns,
@@ -30,6 +31,7 @@ const BasicTableV2 = ({ data, columns, tableContainerRef, isLoading, isFetching,
     manualSorting: true,
     debugTable: true,
   })
+  const tableContainerRef = useRef<HTMLElement | null>(null)
 
   table.setOptions((prev) => ({
     ...prev,
@@ -46,21 +48,25 @@ const BasicTableV2 = ({ data, columns, tableContainerRef, isLoading, isFetching,
     overscan: 5,
   })
 
+  useEffect(() => {
+    const time = setTimeout(() => {
+      if (tableContainerRef.current) {
+        setScrollTarget?.(tableContainerRef.current)
+      }
+    }, 1000)
+
+    return () => {
+      clearTimeout(time)
+      setScrollTarget?.(null as unknown as HTMLElement)
+    }
+  }, [setScrollTarget, tableContainerRef])
+
   if (isLoading) {
     return <>Loading...</>
   }
   return (
     <>
-      <div
-        onScroll={(e) => loadMore(e.currentTarget)}
-        ref={tableContainerRef}
-        className={cn('container relative overflow-auto', className)}
-        // style={{
-        //   overflow: 'auto', //our scrollable table container
-        //   position: 'relative', //needed for sticky header
-        //   height: '600px', //should be a fixed height
-        // }}
-      >
+      <div ref={tableContainerRef as React.RefObject<HTMLDivElement>} className={cn('container relative overflow-auto', className)}>
         <table style={{ display: 'grid' }}>
           <thead
             style={{
