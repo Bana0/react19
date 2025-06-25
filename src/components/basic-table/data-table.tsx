@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { DataTablePagination } from './page'
 import type { Page } from '@/views/table'
 import { useState } from 'react'
+import { ScrollArea } from '@radix-ui/react-scroll-area'
 
 interface DataTableProps<TData, TValue> {
   columns: ColumnDef<TData, TValue>[]
@@ -44,20 +45,18 @@ export function DataTable<TData, TValue>({ columns, data, page, onChangePage }: 
 
   return (
     <div className="rounded-md border w-[800px]">
-      <Table>
-        <TableHeader className="sticky top-0 left-0 right-0 w-[800px] bg-amber-200 shadow-sm">
-          {table.getHeaderGroups().map((headerGroup) => (
-            <TableRow key={headerGroup.id}>
-              {headerGroup.headers.map((header) => (
-                <TableHead key={header.id}>{flexRender(header.column.columnDef.header, header.getContext())}</TableHead>
-              ))}
-            </TableRow>
-          ))}
-        </TableHeader>
-      </Table>
-
-      <div className="h-[500px] overflow-auto">
+      <ScrollArea className="h-[400px] w-[800px] overflow-auto">
         <Table>
+          <TableHeader className="sticky top-0 left-0 right-0 bg-amber-200 shadow-sm">
+            {table.getHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>{flexRender(header.column.columnDef.header, header.getContext())}</TableHead>
+                ))}
+              </TableRow>
+            ))}
+          </TableHeader>
+
           <TableBody>
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
@@ -76,8 +75,7 @@ export function DataTable<TData, TValue>({ columns, data, page, onChangePage }: 
             )}
           </TableBody>
         </Table>
-      </div>
-
+      </ScrollArea>
       <DataTablePagination table={table} page={page} onChangePage={onChangePage} />
     </div>
   )

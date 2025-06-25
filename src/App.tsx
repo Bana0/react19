@@ -79,6 +79,7 @@ const App = () => {
         <Button onClick={() => navigator('/about')}>About</Button>
         <Button onClick={() => navigator('/table')}>Table</Button>
         <Button onClick={() => navigator('/shadcn')}>Shadcn</Button>
+        <Button onClick={() => navigator('/virtualTable')}>VirtualTable</Button>
       </div>
       <hr />
       <div className="container m-auto pt-0.5">{useRoutes(routes)}</div>

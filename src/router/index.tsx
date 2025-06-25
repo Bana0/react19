@@ -5,6 +5,7 @@ const Home = lazy(() => import('@/views/home/index'))
 const About = lazy(() => import('@/views/about/index'))
 const Table = lazy(() => import('@/views/table/index'))
 const Shadcn = lazy(() => import('@/views/shadcn/index'))
+const VirtualTable = lazy(() => import('@/views/virtualTable/index'))
 const routes = [
   {
     path: '/',
@@ -29,6 +30,10 @@ const routes = [
       {
         path: '/shadcn',
         element: <Shadcn></Shadcn>,
+      },
+      {
+        path: '/virtualTable',
+        element: <VirtualTable></VirtualTable>,
       },
     ],
   },
