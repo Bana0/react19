@@ -80,7 +80,7 @@ const VirtualTable = () => {
 
   return (
     <div className="ml-auto mr-auto flex flex-col items-center justify-center">
-      <BasicTableV2 className="h-[400px] w-[500px] bg-amber-300" data={flatData} columns={columns} isLoading={isLoading} isFetching={isFetching} setScrollTarget={setScrollTarget} />
+      <BasicTableV2 className="h-[400px] w-[500px]" data={flatData} columns={columns} isLoading={isLoading} isFetching={isFetching} setScrollTarget={setScrollTarget} />
     </div>
   )
 }
