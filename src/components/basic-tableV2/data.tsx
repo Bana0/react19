@@ -1,5 +1,4 @@
 import { faker } from '@faker-js/faker'
-import type { ColumnSort, SortingState } from '@tanstack/react-table'
 
 export type Person = {
   id: number
@@ -56,18 +55,18 @@ export function makeData(...lens: number[]) {
 const data = makeData(1000)
 
 //simulates a backend api
-export const fetchData = async (start: number, size: number, sorting: SortingState) => {
+export const fetchData = async (start: number, size: number) => {
   const dbData = [...data]
-  if (sorting.length) {
-    const sort = sorting[0] as ColumnSort
-    const { id, desc } = sort as { id: keyof Person; desc: boolean }
-    dbData.sort((a, b) => {
-      if (desc) {
-        return a[id] < b[id] ? 1 : -1
-      }
-      return a[id] > b[id] ? 1 : -1
-    })
-  }
+  //   if (sorting.length) {
+  // const sort = sorting[0] as ColumnSort
+  // const { id, desc } = sort as { id: keyof Person; desc: boolean }
+  // dbData.sort((a, b) => {
+  //   if (desc) {
+  //     return a[id] < b[id] ? 1 : -1
+  //   }
+  //   return a[id] > b[id] ? 1 : -1
+  // })
+  //   }
 
   //simulate a backend api
   await new Promise((resolve) => setTimeout(resolve, 200))

@@ -1,9 +1,10 @@
 import BasicTableV2 from '@/components/basic-tableV2'
-import type { Person, PersonApiResponse } from '@/components/basic-tableV2/data'
-import { useInfiniteQuery } from '@tanstack/react-query'
-import type { ColumnDef, SortingState } from '@tanstack/react-table'
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
-
+import { fetchData, type Person, type PersonApiResponse } from '@/components/basic-tableV2/data'
+import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query'
+import type { ColumnDef } from '@tanstack/react-table'
+import { useCallback, useEffect, useMemo, useRef } from 'react'
+import './index.scss'
+const fetchSize = 50
 const VirtualTable = () => {
   const columns = useMemo<ColumnDef<Person>[]>(
     () => [
@@ -53,11 +54,11 @@ const VirtualTable = () => {
   const { data, fetchNextPage, isFetching, isLoading } = useInfiniteQuery<PersonApiResponse>({
     queryKey: [
       'people',
-      sorting, //refetch when sorting changes
+      //   sorting, //refetch when sorting changes
     ],
     queryFn: async ({ pageParam = 0 }) => {
       const start = (pageParam as number) * fetchSize
-      const fetchedData = await fetchData(start, fetchSize, sorting) //pretend api call
+      const fetchedData = await fetchData(start, fetchSize) //pretend api call
       return fetchedData
     },
     initialPageParam: 0,
@@ -83,13 +84,13 @@ const VirtualTable = () => {
   )
   const tableContainerRef = useRef<HTMLDivElement>(null)
 
-  //   const [sorting, setSorting] = useState<SortingState>([])
   useEffect(() => {
     fetchMoreOnBottomReached(tableContainerRef.current)
   }, [fetchMoreOnBottomReached])
+
   return (
-    <div>
-      <BasicTableV2 data={flatData} columns={columns} tableContainerRef={tableContainerRef} />
+    <div className="ml-auto mr-auto flex flex-col items-center justify-center">
+      <BasicTableV2 className="h-[400px] w-[500px] bg-amber-300" data={flatData} columns={columns} isLoading={isLoading} isFetching={isFetching} tableContainerRef={tableContainerRef} loadMore={fetchMoreOnBottomReached} />
     </div>
   )
 }
