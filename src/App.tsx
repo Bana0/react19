@@ -74,15 +74,18 @@ const App = () => {
   const navigator = useNavigate()
   return (
     <>
-      <div className="flex items-center justify-center gap-4">
+      {/* <div className="flex items-center justify-center gap-4">
+        <Button onClick={() => navigator('/menus')}>menus</Button>
         <Button onClick={() => navigator('/home')}>Home</Button>
         <Button onClick={() => navigator('/about')}>About</Button>
         <Button onClick={() => navigator('/table')}>Table</Button>
         <Button onClick={() => navigator('/shadcn')}>Shadcn</Button>
         <Button onClick={() => navigator('/virtualTable')}>VirtualTable</Button>
       </div>
-      <hr />
-      <div className="container m-auto pt-0.5">{useRoutes(routes)}</div>
+      <hr /> */}
+      {/* <div className="container m-auto pt-0.5"> */}
+      {useRoutes(routes)}
+      {/* </div> */}
     </>
   )
 }

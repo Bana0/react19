@@ -14,31 +14,15 @@ interface DataTableProps<TData, TValue> {
 }
 
 export function DataTable<TData, TValue>({ columns, data, page, onChangePage }: DataTableProps<TData, TValue> & { page: Page; onChangePage: (page: number, pageSize: number) => void }) {
-  const [columnPinning, setColumnPinning] = useState<ColumnPinningState>({
-    left: [],
-    right: [],
-  })
-  const [rowPinning, setRowPinning] = useState<RowPinningState>({
-    top: [],
-    bottom: [],
-  })
-  const [keepPinnedRows, setKeepPinnedRows] = useState(true)
   const table = useReactTable({
     data,
     columns,
     state: {
-      columnPinning,
-      rowPinning,
-    },
-    initialState: {
       columnPinning: {
-        left: ['id'],
-        // right: ['actions-column'],
+        left: ['id'], // 左侧固定的列 ID
+        right: [], // 右侧固定的列 ID
       },
     },
-    onColumnPinningChange: setColumnPinning,
-    onRowPinningChange: setRowPinning,
-    keepPinnedRows,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
   })
@@ -48,7 +32,34 @@ export function DataTable<TData, TValue>({ columns, data, page, onChangePage }: 
       <ScrollArea className="h-[400px] w-[800px] overflow-auto">
         <Table>
           <TableHeader className="sticky top-0 left-0 right-0 bg-amber-200 shadow-sm">
-            {table.getHeaderGroups().map((headerGroup) => (
+            {/* 渲染左侧固定列的表头 */}
+            {table.getLeftHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <TableHead
+                    key={header.id}
+                    style={{
+                      position: 'sticky',
+                      left: 0, // 多列时需累加前面所有固定列宽度
+                      zIndex: 3,
+                      background: '#fff',
+                    }}
+                  >
+                    {flexRender(header.column.columnDef.header, header.getContext())}
+                  </TableHead>
+                ))}
+              </TableRow>
+            ))}
+            {/* 渲染中间列的表头 */}
+            {table.getCenterHeaderGroups().map((headerGroup) => (
+              <TableRow key={headerGroup.id}>
+                {headerGroup.headers.map((header) => (
+                  <TableHead key={header.id}>{flexRender(header.column.columnDef.header, header.getContext())}</TableHead>
+                ))}
+              </TableRow>
+            ))}
+            {/* 渲染右侧固定列的表头 */}
+            {table.getRightHeaderGroups()?.map((headerGroup) => (
               <TableRow key={headerGroup.id}>
                 {headerGroup.headers.map((header) => (
                   <TableHead key={header.id}>{flexRender(header.column.columnDef.header, header.getContext())}</TableHead>
@@ -61,7 +72,26 @@ export function DataTable<TData, TValue>({ columns, data, page, onChangePage }: 
             {table.getRowModel().rows?.length ? (
               table.getRowModel().rows.map((row) => (
                 <TableRow key={row.id}>
-                  {row.getVisibleCells().map((cell) => (
+                  {/* 渲染左侧固定列的单元格 */}
+                  {row.getLeftVisibleCells().map((cell) => (
+                    <TableCell
+                      key={cell.id}
+                      style={{
+                        position: 'sticky',
+                        left: 0, // 多列时需累加前面所有固定列宽度
+                        zIndex: 2,
+                        background: '#fff',
+                      }}
+                    >
+                      {flexRender(cell.column.columnDef.cell, cell.getContext())}
+                    </TableCell>
+                  ))}
+                  {/* 渲染中间列的单元格 */}
+                  {row.getCenterVisibleCells().map((cell) => (
+                    <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
+                  ))}
+                  {/* 渲染右侧固定列的单元格 */}
+                  {row.getRightVisibleCells().map((cell) => (
                     <TableCell key={cell.id}>{flexRender(cell.column.columnDef.cell, cell.getContext())}</TableCell>
                   ))}
                 </TableRow>

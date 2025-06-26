@@ -3,7 +3,7 @@ import { fetchData, type Person, type PersonApiResponse } from '@/components/bas
 import { keepPreviousData, useInfiniteQuery } from '@tanstack/react-query'
 import type { ColumnDef } from '@tanstack/react-table'
 import { useEffect, useMemo, useState } from 'react'
-import './index.scss'
+// import './index.scss'
 import useInfiniteScroll from '@/hooks/useInfiniteScroll'
 const fetchSize = 50
 const VirtualTable = () => {

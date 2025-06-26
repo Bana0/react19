@@ -4,7 +4,7 @@ import { Input } from '@/components/ui/input'
 import { zodResolver } from '@hookform/resolvers/zod'
 import { useForm } from 'react-hook-form'
 import { z } from 'zod'
-import './index.scss'
+// import './index.scss'
 import { useState } from 'react'
 
 const formSchema = z.object({
