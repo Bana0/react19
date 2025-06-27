@@ -23,33 +23,31 @@ const Sider = ({ sidebar }: { sidebar: SidebarItem }) => {
   return (
     <Collapsible defaultOpen={false} className="group/collapsible">
       <SidebarMenu>
-        <Collapsible defaultOpen={false} className="group/collapsible">
-          <SidebarMenuItem>
-            <CollapsibleTrigger asChild>
-              <SidebarMenuButton tooltip={sidebar.title}>
-                {sidebar.icon && <sidebar.icon />}
-                <span>{sidebar.title}</span>
-                <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
-              </SidebarMenuButton>
-            </CollapsibleTrigger>
-            <CollapsibleContent>
-              <SidebarMenuSub>
-                {sidebar.children?.map((i) => {
-                  return (
-                    <SidebarMenuSubItem key={i.title}>
-                      <a>
-                        <SidebarMenuSubButton asChild onClick={jumpTo(i)}>
-                          {/* {i.icon && <i.icon />} */}
-                          <span>{i.title}</span>
-                        </SidebarMenuSubButton>
-                      </a>
-                    </SidebarMenuSubItem>
-                  )
-                })}
-              </SidebarMenuSub>
-            </CollapsibleContent>
-          </SidebarMenuItem>
-        </Collapsible>
+        <SidebarMenuItem>
+          <CollapsibleTrigger asChild>
+            <SidebarMenuButton tooltip={sidebar.title}>
+              {sidebar.icon && <sidebar.icon />}
+              <span>{sidebar.title}</span>
+              <ChevronRight className="ml-auto transition-transform duration-200 group-data-[state=open]/collapsible:rotate-90" />
+            </SidebarMenuButton>
+          </CollapsibleTrigger>
+          <CollapsibleContent>
+            <SidebarMenuSub>
+              {sidebar.children?.map((i) => {
+                return (
+                  <SidebarMenuSubItem key={i.title}>
+                    <a>
+                      <SidebarMenuSubButton asChild onClick={jumpTo(i)}>
+                        {/* {i.icon && <i.icon />} */}
+                        <span>{i.title}</span>
+                      </SidebarMenuSubButton>
+                    </a>
+                  </SidebarMenuSubItem>
+                )
+              })}
+            </SidebarMenuSub>
+          </CollapsibleContent>
+        </SidebarMenuItem>
       </SidebarMenu>
     </Collapsible>
   )
